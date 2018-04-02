@@ -31,6 +31,7 @@ The following options can be defined with `-e`:
 - `cloud_instance`: The specific instance of the overall project. (defaults to cloud_model)
 - `cloud_provider`: The cloud provider in which to deploy the model. (defaults to aws)
 - `cloud_region`: The region of the cloud provider in which to deploy the model (defaults to us-east-1)
+- `cloud_cidr` : The private subnet for the deployment in CIDR notation.
 - `inventory_root`: The root of the inventory file, host_vars, and group_vars.
 
 `cloud_name` is derived from `cloud_project` + `cloud_instance` and used to identify that deployment.
