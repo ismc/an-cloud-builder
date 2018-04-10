@@ -200,12 +200,6 @@
       tags:
         - facts
 
-    - debug: var=hostvars
-      tags:
-        - facts
-
-    - debug: var=groups
-
     # - name: End
     #   meta: end_play
 
@@ -234,6 +228,3 @@
         dest: "{{ inventory_root }}/{{ cloud_project }}"
       tags:
         - facts
-
-
-    - debug: var=cloud_inventory.all.children

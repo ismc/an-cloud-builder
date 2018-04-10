@@ -207,7 +207,6 @@
         - requests
         - pyopenssl
         - netaddr
-        - "ansible-tower-cli==3.1.8"
         - xmltodict
         - ncclient
 
@@ -236,7 +235,6 @@
         - requests
         - pyopenssl
         - netaddr
-        - "ansible-tower-cli==3.1.8"
         - xmltodict
         - ncclient
       tags:
@@ -365,61 +363,49 @@
       become_user: "{{ demo_username }}"
       ignore_errors: true
 
-    - name: Add tower "{{ demo_username }}" account
-      command: tower-cli user create --username "{{ demo_username }}" --password "{{ cloud_password }}" --is-superuser yes --email labuser@ansible.com
-      become_user: "{{ demo_username }}"
-      tags:
-        - tower
-        - tower_cli
+    - block:
+        - name: Add tower "{{ demo_username }}" account
+          command: tower-cli user create --username "{{ demo_username }}" --password "{{ cloud_password }}" --is-superuser yes --email labuser@ansible.com
+          become_user: "{{ demo_username }}"
 
-    - name: Add tower git credential
-      command: tower-cli credential create --name git --kind scm --organization Default --ssh-key-data ~/.ssh/id_rsa
-      become_user: "{{ demo_username }}"
-      tags:
-        - tower
-        - tower_cli
+        - name: Add tower git credential
+          command: tower-cli credential create --name git --kind scm --organization Default --ssh-key-data ~/.ssh/id_rsa
+          become_user: "{{ demo_username }}"
 
-    - name: Add tower ssh credential
-      command: tower-cli credential create --name tower --kind ssh --organization Default --ssh-key-data ~/.ssh/id_rsa
-      become_user: "{{ demo_username }}"
-      tags:
-        - tower
-        - tower_cli
+        - name: Add tower ssh credential
+          command: tower-cli credential create --name tower --kind ssh --organization Default --ssh-key-data ~/.ssh/id_rsa
+          become_user: "{{ demo_username }}"
 
-    - name: Add tower demo repo
-      command: tower-cli project create --name an-demos --scm-type git --scm-url git@localhost:/home/git/an-demos.git --scm-credential git
-      become_user: "{{ demo_username }}"
-      tags:
-        - tower
-        - tower_cli
+        - name: Add tower demo repo
+          command: tower-cli project create --name an-demos --scm-type git --scm-url git@localhost:/home/git/an-demos.git --scm-credential git
+          become_user: "{{ demo_username }}"
 
-    - name: Add tower demo inventory
-      command: tower-cli inventory create --name an-demos --organization Default
-      become_user: "{{ demo_username }}"
-      tags:
-        - tower
-        - tower_cli
+        - name: Add tower demo inventory
+          command: tower-cli inventory create --name an-demos --organization Default
+          become_user: "{{ demo_username }}"
 
-    - name: Add the playbooks
-      command: tower-cli job_template create --name "{{ item }}" --project an-demos --inventory an-demos --playbook "net/{{ item }}.yml" --limit network --machine-credential tower
-      become_user: "{{ demo_username }}"
-      with_items:
-        - network-hostname
-        - network-interfaces
-        - network-logging
-        - network-banners
-        - network-resolver
-        - network-tunnels
-        - network-check
-        - network-bgp-peers
-        - network-bgp-networks
-        - network-checkpoint
-        - network-rollback
-        - network-system
-        - network-security
+        - name: Add the playbooks
+          command: tower-cli job_template create --name "{{ item }}" --project an-demos --inventory an-demos --playbook "net/{{ item }}.yml" --limit network --machine-credential tower
+          become_user: "{{ demo_username }}"
+          with_items:
+            - network-hostname
+            - network-interfaces
+            - network-logging
+            - network-banners
+            - network-resolver
+            - network-tunnels
+            - network-check
+            - network-bgp-peers
+            - network-bgp-networks
+            - network-checkpoint
+            - network-rollback
+            - network-system
+            - network-security
+
       tags:
         - tower
         - tower_cli
+        - tower_config
 
     # - name: Add tower git credential
     #   tower_credential:
