@@ -43,7 +43,7 @@
 
 - template:
     src: aws-cft.yml.j2
-    dest: ~/Downloads/{{ cloud_vpc_data.name }}-cft.yml
+    dest: /tmp/{{ cloud_vpc_data.name }}-cft.yml
 
 - name: Create Stack {{ cloud_vpc_data.name }}
   cloudformation:

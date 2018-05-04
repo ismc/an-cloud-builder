@@ -20,7 +20,7 @@
 
 - template:
     src: azure-rmt.yml.j2
-    dest: ~/Downloads/{{ cloud_vpc_data.name }}-rmt.yml
+    dest: /tmp/{{ cloud_vpc_data.name }}-rmt.yml
 #
 # - set_fact:
 #     arm_template: "{{ lookup('template', 'azure_deploy.json.j2') }}"
