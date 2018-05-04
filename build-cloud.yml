@@ -19,6 +19,7 @@
     cloud_vars_file: "{{ inventory_root }}/{{ cloud_project }}/all-vars.yml"
     cloud_password: "Ansibull{{ lookup('password', '/dev/null chars=digits length=4') }}"
     cloud_cidr: '10.1.0.0/16'
+    cloud_instance_name_depth: 2
     interfaces_in_inventory: no
     default_group_vars:
       ios:
@@ -153,7 +154,7 @@
 
     - name: Create the host_vars directories
       file:
-        path: "{{ inventory_root }}/{{ cloud_project }}/host_vars/{{ host_interface_list.key.split('.')[0] }}.{{ cloud_instance }}"
+        path: "{{ inventory_root }}/{{ cloud_project }}/host_vars/{{ host_interface_list.key }}"
         state: directory
         mode: 0755
       with_dict: "{{ host_interfaces_dict }}"
@@ -165,7 +166,7 @@
     - name: Create the interfaces file
       template:
         src: local-interfaces.j2
-        dest: "{{ inventory_root }}/{{ cloud_project }}/host_vars/{{ host_interface_list.key.split('.')[0] }}.{{ cloud_instance }}/interfaces.yml"
+        dest: "{{ inventory_root }}/{{ cloud_project }}/host_vars/{{ host_interface_list.key }}/interfaces.yml"
       with_dict: "{{ host_interfaces_dict }}"
       loop_control:
         loop_var: host_interface_list

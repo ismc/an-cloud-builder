@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  hub.scarter:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      InstanceTenancy: default
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+      - Key: Name
+        Value: hub.scarter
+      - Key: tenant
+        Value: hub.scarter
+  igw.hub.scarter:
+    Type: AWS::EC2::InternetGateway
+    Properties: {}
+  gw1:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: vpc6b54f610
+      InternetGatewayId:
+        Ref: igwd6d419ae
+  mgmt.hub.scarter:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: us-east-1a
+      VpcId:
+        Ref: hub.scarter
+      Tags:
+      - Key: Name
+        Value: mgmt.hub.scarter
+      - Key: tenant
+        Value: hub.scarter
+  rtb.mgmt.hub.scarter:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: vpcfb56f480
+      Tags:
+      - Key: Name
+        Value: mgmt.hub.scarter
+  subnetroute1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: rtbe5ec3d99
+      SubnetId:
+        Ref: subnetd6d6389c
+  route1:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId:
+        Ref: rtbe5ec3d99
+      GatewayId:
+        Ref: igwd6d419ae
+    DependsOn: gw1
+  outside.hub.scarter:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+      VpcId:
+        Ref: hub.scarter
+      Tags:
+      - Key: Name
+        Value: outside.hub.scarter
+      - Key: tenant
+        Value: hub.scarter
+  rtbf91acb85:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: vpcfb56f480
+      Tags:
+      - Key: Name
+        Value: outside.hub.scarter
+  inside.hub.scarter:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-1a
+      VpcId:
+        Ref: hub.scarter
+      Tags:
+      - Key: Name
+        Value: inside.hub.scarter
+      - Key: tenant
+        Value: hub.scarter
+  rtbd2ef3eae:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: vpcfb56f480
+      Tags:
+      - Key: Name
+        Value: inside.hub.scarter

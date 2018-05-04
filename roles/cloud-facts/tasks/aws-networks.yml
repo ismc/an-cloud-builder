@@ -1,4 +1,9 @@
 ---
+- name: Default the Lookup Structures
+  set_fact:
+    cloud_subnet_facts: {}
+    cloud_security_group_map: {}
+
 - name: Get the VPC ID for {{ cloud_vpc_name }}
   ec2_vpc_net_facts:
     aws_access_key: "{{ aws_access_key | default(omit) }}"
@@ -22,7 +27,7 @@
 
 - name: Create Subnet Mapping
   set_fact:
-    cloud_subnet_facts: "{{ cloud_subnet_facts|default({}) | combine( {item.tags.Name: item} ) }}"
+    cloud_subnet_facts: "{{ cloud_subnet_facts | combine( {item.tags.Name: item} ) }}"
   with_items: "{{ subnet_facts.subnets }}"
 
 - name: Get Security Group facts
@@ -34,5 +39,9 @@
 
 - name: Create Security Group mapping
   set_fact:
-    cloud_security_group_map: "{{ cloud_security_group_map|default({}) | combine( {item.group_name: item} ) }}"
+    cloud_security_group_map: "{{ cloud_security_group_map | combine( {item.tags.Name: item} ) }}"
+  when: item.tags.Name is defined
   with_items: "{{ security_group_facts.security_groups }}"
+
+- debug: var=cloud_subnet_facts
+- debug: var=cloud_security_group_map

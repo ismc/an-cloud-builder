@@ -23,22 +23,22 @@
 #--------------------------------------------------
 # Install tower-cli
 #--------------------------------------------------
-- name: Install tower-cli
-
-  pip:
-    name: "{{ item }}"
-    state: latest
-  become: yes
-  become_user: root
-  with_items:
-    - "ansible-tower-cli==3.1.8"
-
-- name: Create /etc/tower/tower_cli.cfg
-  template:
-    src: tower_cli.cfg.j2
-    dest: /etc/tower/tower_cli.cfg
-  become: yes
-  become_user: root
+# - name: Install tower-cli
+#
+#   pip:
+#     name: "{{ item }}"
+#     state: latest
+#   become: yes
+#   become_user: root
+#   with_items:
+#     - "ansible-tower-cli==3.1.8"
+#
+# - name: Create /etc/tower/tower_cli.cfg
+#   template:
+#     src: tower_cli.cfg.j2
+#     dest: /etc/tower/tower_cli.cfg
+#   become: yes
+#   become_user: root
 
 #--------------------------------------------------
 # Add License

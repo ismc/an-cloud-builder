@@ -15,7 +15,7 @@
     demo_repo_root: 'https://github.com/network-automation'
     demo_root: "~{{ demo_username }}/{{ demo_repo_name }}"
     ansible_tower_admin_pass: "{{ lookup('password', '/tmp/passwordfile chars=digits') }}"
-    use_ansible_devel: yes
+    use_ansible_devel: no
 
   tasks:
     # - name: Update all packages
@@ -174,7 +174,7 @@
 
     - name: Install YUM packages
       yum:
-        name: ansible
+        name: 'https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.5.2-1.el7.ans.noarch.rpm'
         state: latest
       when: use_ansible_devel|bool == false
 
@@ -243,7 +243,7 @@
     - name: Add IP addresses to /etc/hosts
       lineinfile:
         dest: /etc/hosts
-        line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname.split('.')[0] }}.{{ hostvars[item].cloud_instance }}"
+        line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname }}"
         state: present
       with_items: "{{ groups.all }}"
 

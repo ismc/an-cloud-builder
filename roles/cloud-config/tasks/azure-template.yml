@@ -17,14 +17,17 @@
 
 # - debug: var=private_ip_map
 #
+
 - template:
-    src: azure_deploy.json.j2
-    dest: '~/Downloads/azure_deploy.json'
+    src: azure-rmt.yml.j2
+    dest: ~/Downloads/{{ cloud_vpc_data.name }}-rmt.yml
 #
 # - set_fact:
 #     arm_template: "{{ lookup('template', 'azure_deploy.json.j2') }}"
 #
 # - debug: var=arm_template
+
+# - meta: end_play
 
 - name: Create Azure Resource Group {{ cloud_vpc_data.project }} in {{ cloud_vpc_data.region }}
   azure_rm_resourcegroup:
@@ -61,4 +64,4 @@
 # Pause for 5 minutes to build app cache.
 - name: Wait for the Azure deployment
   pause:
-    minutes: 2
+    minutes: 5
