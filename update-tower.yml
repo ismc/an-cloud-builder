@@ -20,6 +20,7 @@
     cloud_password: "Ansibull{{ lookup('password', '/dev/null chars=digits length=4') }}"
     cloud_cidr: '10.1.0.0/16'
     cloud_instance_name_depth: 2
+    cloud_state: present
     interfaces_in_inventory: no
     default_group_vars:
       ios:
@@ -87,7 +88,6 @@
         - cloud_vpc_name: "{{ vpc_item.name }}"
         - cloud_vpc_data: "{{ vpc_item }}"
       with_items: "{{ vpc_list | default([]) }}"
-      tasks_from: instances
       loop_control:
         loop_var: vpc_item
       delegate_to: localhost
@@ -117,13 +117,6 @@
         tower_api_password: "{{ cloud_password }}"
         validate_certs: no
 
-    # - include_role:
-    #     name: tower-api
-    #     tasks_from: inventories
-    #   vars:
-    #     tower_api_inventory_name: an-demos
-    #   run_once: yes
-
     - debug: var=cloud_inventory
     - debug: var=host_inventory_dict
     - debug: var=host_interfaces_dict
@@ -142,16 +135,17 @@
         tower_api_inventory_name: "{{ cloud_project }}"
       run_once: yes
 
-    - include_role:
-        name: tower-api
-        tasks_from: groups
-      vars:
-        validate_certs: no
-        tower_api_inventory_name: "{{ cloud_project }}"
-        tower_api_group_name: "{{ item }}"
-      with_items: "{{ cloud_group_list | unique }}"
-      when: item != 'all'
-      run_once: yes
+    - block:
+      - include_role:
+          name: tower-api
+          tasks_from: groups
+        vars:
+          validate_certs: no
+          tower_api_inventory_name: "{{ cloud_project }}"
+          tower_api_group_name: "{{ item }}"
+        with_items: "{{ cloud_group_list | unique }}"
+        when: item != 'all'
+      when: cloud_state == 'present'
 
     - include_role:
         name: tower-api
@@ -161,6 +155,7 @@
         tower_api_inventory_name: "{{ cloud_project }}"
         tower_api_host_name: "{{ item.key }}"
         tower_api_host_groups: "{{ item.value.groups.split(',') }}"
+        tower_api_cloud_state: "{{ cloud_state }}"
         tower_api_host_vars:
           ansible_host: "{{ item.value.ansible_host }}"
           ansible_user: "{{ item.value.ansible_user }}"
