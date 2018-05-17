@@ -62,6 +62,8 @@
             path: "{{ key_root }}"
             state: directory
             mode: 0777
+          tags:
+            - keys
 
         - name: Generate SSH keys
           shell: ssh-keygen -b 2048 -t rsa -f "{{ cloud_private_key_file }}" -I "{{ cloud_name }}" -q -N ""
@@ -69,6 +71,8 @@
             creates: "{{ cloud_private_key_file }}"
           delegate_to: localhost
           run_once: yes
+          tags:
+            - keys
 
         # - openssl_privatekey:
         #     path: "{{ cloud_private_key_file }}"
@@ -87,8 +91,7 @@
         - set_fact:
             cloud_public_key_material: "{{ lookup('file', cloud_public_key_file) }}"
       when: cloud_public_key_material is not defined
-      tags:
-        - keys
+
 
     - name: Find the cloud model
       set_fact:
